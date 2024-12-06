@@ -47,4 +47,5 @@ bool confirm(void) {
     printf("Etes vous sur de vouloir faire cette modification?(YES/NO)");
     scanf("%2s", confirmation);
     return strcmp(confirmation, "YES");
+
 }

@@ -1,9 +1,9 @@
 #pragma region // librairie externes
 
-#include "cstring"
-#include "memory"
-#include "stdio.h"
-#include "stdlib.h"
+#include <cstring>
+#include <memory>
+#include <stdio.h>
+#include <stdlib.h>
 #include <cstdint>
 
 #pragma endregion // librairie externes
@@ -16,6 +16,7 @@
 #pragma endregion // declaration des fonctions
 
 #pragma region // declaration des variables
+
 
 enum mois {
     janvier,
@@ -74,6 +75,7 @@ class fiche_etu {
     void get_note(uint8_t *note,uint8_t num_note);
     void get_moyenne(float *moyenne);
 };
+
 
 #pragma endregion // declaration des variables
 #endif

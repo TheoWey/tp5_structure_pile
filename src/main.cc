@@ -2,6 +2,7 @@
 
 int main(void) {
     init();
+
     loop();
 }
 
@@ -29,5 +30,5 @@ void new_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
     {
         *fiche = move(new_fiche); // Transfer ownership to the new array
     }
-    create_fiche(fiche);
+    // create_fiche(fiche);
 }
