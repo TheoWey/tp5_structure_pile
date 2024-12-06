@@ -26,5 +26,9 @@ const etudiant name5={"arture" ,"guillere"};
 void init(void);
 void loop(void);
 
+void new_etu(unique_ptr<fiche_etu[]> *fiche,uint8_t *nb_etu);
+
+
+
 #pragma endregion // declaration des fonctions
 #endif

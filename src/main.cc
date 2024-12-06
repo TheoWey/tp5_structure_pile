@@ -1,21 +1,7 @@
 #include "main.h"
 
 int main(void) {
-    printf("hello world");
     init();
-    etudiant_class etu[5] = {name1, name2, name3, name4, name5};
-    for (uint8_t i = 0; i < 5; i++) {
-        etu[i].set_note((rand() % 20) + 1);
-    }
-    for (uint8_t i = 0; i < 5; i++) {
-        uint8_t note = 0;
-        etudiant name;
-        etu[i].get_note(&note);
-        if (note >= 10) {
-            name = etu[i].get_name();
-            printf("%s %s a %i/20\n", name.prenom, name.nom, note);
-        }
-    }
     loop();
 }
 
@@ -24,6 +10,24 @@ void init(void) {
     printf("init ok\n");
 }
 void loop(void) {
+    uint8_t nb_etu = 0;
+    unique_ptr<fiche_etu[]> fiche = make_unique<fiche_etu[]>(nb_etu);
     while (1) {
     }
+}
+
+void new_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
+    (*nb_etu)++;
+    unique_ptr<fiche_etu[]> new_fiche = make_unique<fiche_etu[]>(*nb_etu);
+    // Correctly move elements from the old array to the new one
+    if (*nb_etu >= 1) // Ensure there is something to move
+    {
+        for (int8_t i = 0; i < (*nb_etu) - 1; ++i) {
+            new_fiche[i] = move((*fiche)[i]); // Move each element
+        }
+    }
+    {
+        *fiche = move(new_fiche); // Transfer ownership to the new array
+    }
+    create_fiche(fiche);
 }
