@@ -2,6 +2,7 @@
 
 int main(void) {
     init();
+
     loop();
 }
 
