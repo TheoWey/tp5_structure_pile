@@ -7,11 +7,16 @@ void smart_malloc(unique_ptr<T[]> *array, uint8_t *dim_array) {
     // Vérifier si l'ancien tableau est vide
     if ((*dim_array) > 1) {
         // Copier les éléments de l'ancien tableau vers le nouveau
-        copy(array.get(), array.get() + ((*dim_array) - 1), new_array.get());
+        move((*array).get(), (*array).get() + (*dim_array - 1),
+             new_array.get());
     }
     // L'ancien tableau sera automatiquement détruit à la sortie de son scope
-    array = move(new_array); // Transférer la propriété au nouveau tableau
+    *array = move(new_array); // Transférer la propriété au nouveau tableau
 }
+
+template void smart_malloc<float>(std::unique_ptr<float[]> *, uint8_t *);
+template void smart_malloc<fiche_etu>(std::unique_ptr<fiche_etu[]> *,
+                                      uint8_t *);
 
 bool traitement_date(char date[], uint8_t *day, uint8_t *month,
                      uint32_t *year) {
@@ -48,11 +53,18 @@ error:
 }
 
 bool confirm(bool single) {
-    char confirmation[3];
+    char confirmation[4];
     if ((__NEED_CONFIRM__ && !single) || __NEED_CONFIRM_ALL__) {
         printf("Etes vous sur de vouloir faire cette modification?(YES/NO)");
-        scanf("%2s", confirmation);
-        return strcmp(confirmation, "YES");
+        scanf("%3s", confirmation);
+        return (strcmp(confirmation, "YES") == 0);
     }
     return true;
+}
+
+void clean_str(char *str) {
+    for (uint8_t i = 0; i < sizeof(str) / sizeof(char); i++) {
+        str[i] = ' ';
+        // *(str+1) =' ';
+    }
 }

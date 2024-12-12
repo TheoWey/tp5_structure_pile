@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "etudiant.h"
+#include "etudiant.hh"
 #include "memory.hh"
 
 #pragma endregion // librairie externes
@@ -24,7 +24,7 @@ const etudiant name5 = {"arture", "guillere"};
 
 #pragma endregion // declaration des variables
 
-enum operation { modifier = 'd', ajouter = 'o', noter = 't' };
+enum operation { modifier = 'd', ajouter = 'o', noter = 't',afficher = 'f' };
 
 const uint8_t MAX_NB_ETU = 255;
 

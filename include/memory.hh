@@ -1,15 +1,21 @@
 #pragma region // librairie externes
 
-#include "cstring"
-#include "memory"
-#include "stdio.h"
-#include "stdlib.h"
-
+#include <cstring>
+#include <memory>
+#include <stdio.h>
+#include <stdlib.h>
 #include <cstdint>
+
 #pragma endregion // librairie externes
 
 #ifndef MEMOIRE_HH
 #define MEMOIRE_HH
+
+#pragma region // manage dependancy
+
+#include "etudiant.hh"
+
+#pragma endregion // manage dependancy
 
 #pragma region // declaration des variables
 
@@ -38,34 +44,49 @@ void smart_malloc(unique_ptr<T[]> *array, uint8_t *dim_array);
 
 /**
  * @brief Extracts day, month, and year from a date string.
- * 
- * This function takes a date string in the format "DD/MM/YYYY" and extracts the day, month, and year components.
- * 
+ *
+ * This function takes a date string in the format "DD/MM/YYYY" and extracts the
+ * day, month, and year components.
+ *
  * @param date The date string in the format "DD/MM/YYYY".
- * @param day A pointer to a uint8_t variable where the extracted day will be stored.
- * @param month A pointer to a uint8_t variable where the extracted month will be stored.
- * @param year A pointer to a uint32_t variable where the extracted year will be stored.
- * 
- * @return `true` if the date string is valid and the extraction was successful, `false` otherwise.
- * 
+ * @param day A pointer to a uint8_t variable where the extracted day will be
+ * stored.
+ * @param month A pointer to a uint8_t variable where the extracted month will
+ * be stored.
+ * @param year A pointer to a uint32_t variable where the extracted year will be
+ * stored.
+ *
+ * @return `true` if the date string is valid and the extraction was successful,
+ * `false` otherwise.
+ *
  * @example
  * char date[] = "06/01/2018";
  * uint8_t day, month;
  * uint32_t year;
  * traitement_date(date, &day, &month, &year);
  */
-bool traitement_date(char date[],uint8_t *day,uint8_t *month,uint32_t *year);
+bool traitement_date(char date[], uint8_t *day, uint8_t *month, uint32_t *year);
 
 /**
  * @brief Prompts the user for confirmation and returns a boolean value.
  *
  * This function prompts the user for confirmation with a "YES/NO" question.
- * It reads the user's input and returns `true` if the input is "YES" (case-insensitive),
- * otherwise it returns `false`.
+ * It reads the user's input and returns `true` if the input is "YES"
+ * (case-insensitive), otherwise it returns `false`.
  *
  * @return `true` if the user confirms, `false` otherwise.
  */
 bool confirm(bool single);
+
+/**
+ * @brief Cleans up a string by filling it with spaces.
+ *
+ * This function parses each character in the string
+ * string passed as an argument and replaces it with a space.
+ *
+ * @param str Pointer to the string to be cleaned.
+ */
+void clean_str(char *str);
 
 #pragma endregion // declaration des fonctions
 #endif

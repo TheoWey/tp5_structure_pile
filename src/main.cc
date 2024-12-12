@@ -1,4 +1,4 @@
-#include "main.h"
+#include "main.hh"
 
 int main(void) {
     init();
@@ -16,7 +16,9 @@ void loop(void) {
     uint8_t nb_etu = 0;
     unique_ptr<fiche_etu[]> fiche = make_unique<fiche_etu[]>(nb_etu);
     while (1) {
-        printf("Operation a réaliser (Modifier, Ajouter, noter)");
+        clean_str(answer);
+        printf("Operation a réaliser (Modifier, Ajouter (etudiant), "
+               "Afficher,noter)");
         scanf("%s", answer); // rendre non bloquant?
         switch (answer[2]) {
         case operation::ajouter:
@@ -24,10 +26,25 @@ void loop(void) {
             init_etu(&fiche, &nb_etu);
             break;
         case operation::modifier:
-            /* code */
+            edit_etu(&fiche, &nb_etu);
             break;
         case operation::noter:
             /* code */
+            break;
+        case operation::afficher:
+            clean_str(answer);
+            printf("Un etudiant? Ou toute la base? (si 1 donner directement "
+                   "son numéro, 'tout' pour toute la base 1->%i)",
+                   nb_etu);
+            scanf("%s", answer);
+            if ((strcmp(answer, "tout") == 0)) {
+                for (uint8_t index_aff = 0; index_aff < nb_etu; index_aff++) {
+                    afficher_etu(&fiche, &nb_etu, index_aff - 1);
+                }
+            } else {
+                afficher_etu(&fiche, &nb_etu, atoi(answer));
+            }
+
             break;
         default:
             break;
