@@ -4,14 +4,14 @@ template <typename T>
 void smart_malloc(unique_ptr<T[]> *array, uint8_t *dim_array) {
     (*dim_array)++;
     unique_ptr<T[]> new_array = make_unique<T[]>(*dim_array);
-    // Vérifier si l'ancien tableau est vide
+    // Verifier si l'ancien tableau est vide
     if ((*dim_array) > 1) {
-        // Copier les éléments de l'ancien tableau vers le nouveau
+        // Copier les elements de l'ancien tableau vers le nouveau
         move((*array).get(), (*array).get() + (*dim_array - 1),
              new_array.get());
     }
-    // L'ancien tableau sera automatiquement détruit à la sortie de son scope
-    *array = move(new_array); // Transférer la propriété au nouveau tableau
+    // L'ancien tableau sera automatiquement detruit à la sortie de son scope
+    *array = move(new_array); // Transferer la propriete au nouveau tableau
 }
 
 template void smart_malloc<float>(std::unique_ptr<float[]> *, uint8_t *);
@@ -25,7 +25,7 @@ bool traitement_date(char date[], uint8_t *day, uint8_t *month,
     size_t dateLength = strlen(date); // Get the length of the actual string
 
     // Input validation: Check if the date string is in the correct format
-    if (dateLength != 8 || date[2] != '/' || date[5] != '/') {
+    if (dateLength != 10 || date[2] != '/' || date[5] != '/') {
         // std::cerr << "Invalid date format. Expected DD/MM/YY." << std::endl;
         printf("Format attendu JJ/MM/AAAA : 06/12/2000 par exemple");
         goto error; // Exit the function if the format is incorrect

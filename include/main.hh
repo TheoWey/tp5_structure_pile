@@ -22,11 +22,11 @@ const etudiant name3 = {"laballe", "saitlire"};
 const etudiant name4 = {"jean", "pierre"};
 const etudiant name5 = {"arture", "guillere"};
 
-#pragma endregion // declaration des variables
-
 enum operation { modifier = 'd', ajouter = 'o', noter = 't',afficher = 'f' };
 
 const uint8_t MAX_NB_ETU = 255;
+
+#pragma endregion // declaration des variables
 
 #pragma region // declaration des fonctions
 

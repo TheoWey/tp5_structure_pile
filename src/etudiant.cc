@@ -83,7 +83,7 @@ correction:
         goto redoublement;
         break;
     default:
-        printf("Réponse attendu :\n - prenom\n - nom\n - age\n - formaion\n - "
+        printf("Reponse attendu :\n - prenom\n - nom\n - age\n - formaion\n - "
                "groupe\n - redoublant");
         goto correction;
         break;
@@ -92,50 +92,54 @@ correction:
 
 void saisie_prenom(etudiant *etu) {
     do {
-        printf("Prénom étudiant :");
+        printf("Prenom etudiant :");
         scanf("%16s", etu->prenom);
     } while (!confirm(true));
 }
 
 void saisie_nom(etudiant *etu) {
     do {
-        printf("Nom étudiant :");
+        printf("Nom etudiant :");
         scanf("%16s", etu->nom);
     } while (!confirm(true));
 }
 
 void saisie_age(etudiant *etu) {
-    char char_date[8];
+    char char_date[10];
     date birthdate;
     do {
         printf(
-            "Age étudiant (saisir date de naissance au format JJ/MM/AAAA) :");
-        scanf("%8s", char_date);
-    } while (!traitement_date(char_date, &birthdate.jour, &birthdate.mois,
-                              &birthdate.annee) &&
-             !confirm(true));
+            "Age etudiant (saisir date de naissance au format JJ/MM/AAAA) :");
+        scanf("%10s", char_date);
+        if (traitement_date(char_date, &birthdate.jour, &birthdate.mois,
+                            &birthdate.annee)) {
+            if (confirm(true)) {
+                break;
+            }
+        }
+    } while (true);
 }
 
 void saisie_formation(etudiant *etu) {
     do {
-        printf("Formation étudiant :");
-        scanf("%16s", etu->formation);
+        printf("Formation etudiant :");
+        scanf("%2s", etu->formation);
     } while (!confirm(true));
 }
 
 void saisie_groupe(etudiant *etu) {
     do {
-        printf("Groupe étudiant :");
-        scanf("%16s", etu->groupe);
+        printf("Groupe etudiant :");
+        scanf("%i", (int)etu->groupe);
     } while (!confirm(true));
 }
 
 void saisie_redoublant(etudiant *etu) {
-    char selection[10] = "";
+    char selection[4] = "";
     do {
         clean_str(selection);
         printf("Etudiant redoublant : (YES/NO)");
-        scanf("%16s", selection);
+        scanf("%2s", selection);
         etu->redoublant = (strcmp("YES", selection) == 0);
     } while (!confirm(true));
 }
@@ -155,8 +159,8 @@ void edit_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
         printf("Etudiant a modifer?");
         scanf("%i", &index_edit);
         if (index_edit >= *nb_etu) {
-            printf("Index saisie hors plage, aucun étudiant n'a encore été "
-                   "créé a cette adresse");
+            printf("Index saisie hors plage, aucun etudiant n'a encore ete "
+                   "cree a cette adresse");
         }
     } while (index_edit >= *nb_etu);
     afficher_etu(fiche, nb_etu, index_edit);
@@ -211,7 +215,7 @@ void afficher_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu,
         index_aff = (*nb_etu)--;
     }
     (*fiche)[index_aff].get_fiche(&aff_etu);
-    printf("Etudiant %d enregistré :\n", index_aff + 1);
+    printf("Etudiant %d enregistre :\n", index_aff + 1);
     printf(" - Nom : %16s\n", aff_etu.nom);
     printf(" - Prenom : %16s\n - ", aff_etu.prenom);
     printf(" - date de naissance : %d/%d/%d\n Age : %d\n", aff_etu.age.jour,

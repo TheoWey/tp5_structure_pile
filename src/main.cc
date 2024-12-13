@@ -17,7 +17,7 @@ void loop(void) {
     unique_ptr<fiche_etu[]> fiche = make_unique<fiche_etu[]>(nb_etu);
     while (1) {
         clean_str(answer);
-        printf("Operation a réaliser (Modifier, Ajouter (etudiant), "
+        printf("Operation a realiser (Modifier, Ajouter (etudiant), "
                "Afficher,noter)");
         scanf("%s", answer); // rendre non bloquant?
         switch (answer[2]) {
@@ -34,7 +34,7 @@ void loop(void) {
         case operation::afficher:
             clean_str(answer);
             printf("Un etudiant? Ou toute la base? (si 1 donner directement "
-                   "son numéro, 'tout' pour toute la base 1->%i)",
+                   "son numero, 'tout' pour toute la base 1->%i)",
                    nb_etu);
             scanf("%s", answer);
             if ((strcmp(answer, "tout") == 0)) {
