@@ -47,7 +47,7 @@ void loop(void) {
 
             break;
         default:
-            break;
+            exit(1);
         }
     }
 }

@@ -130,7 +130,7 @@ void saisie_formation(etudiant *etu) {
 void saisie_groupe(etudiant *etu) {
     do {
         printf("Groupe etudiant :");
-        scanf("%i", (int)etu->groupe);
+        scanf("%i", &etu->groupe);
     } while (!confirm(true));
 }
 
@@ -149,7 +149,7 @@ void edit_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
     etudiant edit_etu;
     uint8_t index_edit;
     if (*nb_etu == 0) {
-        printf("Aucun etudiant enregistrer");
+        printf("Aucun etudiant enregistrer\n");
         return;
     }
     for (uint8_t index_aff = 0; index_aff < *nb_etu; index_aff++) {
@@ -160,14 +160,14 @@ void edit_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
         scanf("%i", &index_edit);
         if (index_edit >= *nb_etu) {
             printf("Index saisie hors plage, aucun etudiant n'a encore ete "
-                   "cree a cette adresse");
+                   "cree a cette adresse\n");
         }
     } while (index_edit >= *nb_etu);
     afficher_etu(fiche, nb_etu, index_edit);
 selector:
     clean_str(selection);
     printf("Que souhaitez vous modifier? "
-           "(nom/prenom/age/formation/groupe/redoublant/Fin)");
+           "(nom/prenom/age/formation/groupe/redoublant/Fin) : ");
     scanf("%10s", selection);
     switch (selection[0]) {
     case info_etu::nom:
@@ -192,12 +192,12 @@ selector:
         return;
 
     default:
-        printf("nom/prenom/age/formation/groupe/redoublant/Fin attendu");
+        printf("nom/prenom/age/formation/groupe/redoublant/Fin attendu\n");
         goto selector;
         break;
     }
     clean_str(selection);
-    printf("Continuer les modification? (YES/NO)");
+    printf("Continuer les modification? (YES/NO) : ");
     scanf("%10s", selection);
     if ((strcmp(selection, "YES") == 0)) {
         goto selector;
