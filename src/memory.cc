@@ -21,7 +21,7 @@ template void smart_malloc<fiche_etu>(std::unique_ptr<fiche_etu[]> *,
 bool traitement_date(char date[], uint8_t *day, uint8_t *month,
                      uint32_t *year) {
     char extract[3][5] = {"0"};
-    uint8_t num_val, val = 0;
+    uint8_t num_val = 0, val = 0;
     size_t dateLength = strlen(date); // Get the length of the actual string
 
     // Input validation: Check if the date string is in the correct format
