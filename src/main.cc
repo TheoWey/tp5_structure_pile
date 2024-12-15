@@ -38,8 +38,8 @@ void loop(void) {
                    nb_etu);
             scanf("%s", answer);
             if ((strcmp(answer, "tout") == 0)) {
-                for (uint8_t index_aff = 0; index_aff < nb_etu; index_aff++) {
-                    afficher_etu(&fiche, &nb_etu, index_aff - 1);
+                for (uint8_t index_aff = 1; index_aff <= nb_etu; index_aff++) {
+                    afficher_etu(&fiche, &nb_etu, index_aff);
                 }
             } else {
                 afficher_etu(&fiche, &nb_etu, atoi(answer));
@@ -48,6 +48,7 @@ void loop(void) {
             break;
         default:
             exit(1);
+            break;
         }
     }
 }

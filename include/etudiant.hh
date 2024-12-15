@@ -11,7 +11,6 @@
 
 #pragma endregion // librairie externes
 
-
 #ifndef ETUDIANT_H
 #define ETUDIANT_H
 
@@ -35,8 +34,9 @@ enum mois {
 /**
  * @struct date
  * @brief Structure representing a date with day, month, year, and age.
- * 
- * This structure contains the day, month, year, and an additional field for age.
+ *
+ * This structure contains the day, month, year, and an additional field for
+ * age.
  */
 struct date {
     uint8_t jour;
@@ -54,22 +54,23 @@ struct heure {
 /**
  * @struct etudiant
  * @brief Structure representing a student with personal information.
- * 
- * This structure contains the student's name, date of birth (as a `date` structure), formation, group, and whether the student is a repeat student.
+ *
+ * This structure contains the student's name, date of birth (as a `date`
+ * structure), formation, group, and whether the student is a repeat student.
  */
 struct etudiant {
     char prenom[16];
     char nom[16];
     date age;
-    char formation[2];
-    uint8_t groupe;
+    char formation[4];
+    int groupe;
     bool redoublant;
 };
 
 /**
  * @enum info_etu
  * @brief Enum representing the student information fields.
- * 
+ *
  * This enum is used to represent specific fields of the student structure.
  */
 enum info_etu {
@@ -84,9 +85,11 @@ enum info_etu {
 using namespace std;
 /**
  * @class fiche_etu
- * @brief Represents a student's record, containing personal information and grades.
- * 
- * The `fiche_etu` class manages information related to a student, such as grades, and provides methods to manipulate these grades.
+ * @brief Represents a student's record, containing personal information and
+ * grades.
+ *
+ * The `fiche_etu` class manages information related to a student, such as
+ * grades, and provides methods to manipulate these grades.
  */
 class fiche_etu {
   private:
@@ -97,11 +100,25 @@ class fiche_etu {
 
   public:
     fiche_etu();
-    fiche_etu(const fiche_etu &) = delete; // Disable copy constructor
-    fiche_etu &operator=(const fiche_etu &) = delete; // Disable copy assignment
-    fiche_etu(fiche_etu &&) noexcept = default;       // Move constructor
-    fiche_etu &operator=(fiche_etu &&) noexcept = default; // Move assignment
     ~fiche_etu();
+    // Custom copy constructor
+    fiche_etu(const fiche_etu &other)
+        : etu(other.etu), nb_notes(other.nb_notes),
+          notes(make_unique<float[]>(other.nb_notes)) {
+        std::copy(other.notes.get(), other.notes.get() + nb_notes, notes.get());
+    }
+
+    // Custom copy assignment operator
+    fiche_etu &operator=(const fiche_etu &other) {
+        if (this != &other) { // Check for self-assignment
+            etu = other.etu;
+            nb_notes = other.nb_notes;
+            notes = make_unique<float[]>(other.nb_notes);
+            std::copy(other.notes.get(), other.notes.get() + nb_notes,
+                      notes.get());
+        }
+        return *this;
+    }
 
     void get_fiche(etudiant *fiche_etu);
     void set_fiche(etudiant *fiche_etu);

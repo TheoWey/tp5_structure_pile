@@ -20,7 +20,7 @@
 #pragma region // declaration des variables
 
 #define __NEED_CONFIRM__ true // ask for validation when all modification done
-#define __NEED_CONFIRM_ALL__ true // ask for validation after all modification
+#define __NEED_CONFIRM_ALL__ false // ask for validation after all modification
 
 using namespace std;
 

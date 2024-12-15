@@ -3,9 +3,9 @@
 fiche_etu::fiche_etu() {
     // this->etu = etu;
 }
-
 fiche_etu::~fiche_etu() {
 }
+
 void fiche_etu::set_fiche(etudiant *etu) {
     time_t now = time(0);
     tm *localTime = localtime(&now);
@@ -42,52 +42,74 @@ void new_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
 void init_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
     etudiant new_etu;
     char selection[10] = "";
-prenom:
-    saisie_prenom(&new_etu);
-nom:
-    saisie_nom(&new_etu);
-age:
-    saisie_age(&new_etu);
-formation:
-    saisie_formation(&new_etu);
-groupe:
-    saisie_groupe(&new_etu);
-redoublement:
-    saisie_redoublant(&new_etu);
-
+    bool first_pass = true;
+    if (first_pass) {
+    prenom:
+        saisie_prenom(&new_etu);
+    }
+    if (first_pass) {
+    nom:
+        saisie_nom(&new_etu);
+    }
+    if (first_pass) {
+    age:
+        saisie_age(&new_etu);
+    }
+    if (first_pass) {
+    formation:
+        saisie_formation(&new_etu);
+    }
+    if (first_pass) {
+    groupe:
+        saisie_groupe(&new_etu);
+    }
+    if (first_pass) {
+    redoublement:
+        saisie_redoublant(&new_etu);
+    }
+    if (!first_pass) {
+    correction:
+        clean_str(selection);
+        printf("Quel information modifier?");
+        scanf("%s", selection);
+        switch (selection[0]) {
+        case info_etu::prenom:
+            goto prenom;
+            break;
+        case info_etu::nom:
+            goto nom;
+            break;
+        case info_etu::age:
+            goto age;
+            break;
+        case info_etu::formation:
+            goto formation;
+            break;
+        case info_etu::groupe:
+            goto groupe;
+            break;
+        case info_etu::redoublant:
+            goto redoublement;
+            break;
+        case 'O':
+            goto valide;
+            break;
+        default:
+            printf(
+                "Reponse attendu :\n - prenom\n - nom\n - age\n - formaion\n - "
+                "groupe\n - redoublant\n");
+            goto correction;
+            break;
+        }
+    }
+valide:
+    first_pass = false;
     if (confirm(false)) {
         (*fiche)[*nb_etu].set_fiche(&new_etu);
-        return;
     }
-correction:
-    clean_str(selection);
-    printf("Quel information modifier?");
-    scanf("%s", selection);
-    switch (selection[0]) {
-    case info_etu::prenom:
-        goto prenom;
-        break;
-    case info_etu::nom:
-        goto nom;
-        break;
-    case info_etu::age:
-        goto age;
-        break;
-    case info_etu::formation:
-        goto formation;
-        break;
-    case info_etu::groupe:
-        goto groupe;
-        break;
-    case info_etu::redoublant:
-        goto redoublement;
-        break;
-    default:
-        printf("Reponse attendu :\n - prenom\n - nom\n - age\n - formaion\n - "
-               "groupe\n - redoublant");
-        goto correction;
-        break;
-    }
+    // else {
+    //     goto correction;
+    // }
 }
 
 void saisie_prenom(etudiant *etu) {
@@ -107,12 +129,14 @@ void saisie_nom(etudiant *etu) {
 void saisie_age(etudiant *etu) {
     char char_date[10];
     date birthdate;
+    birthdate.age = 0;
     do {
         printf(
             "Age etudiant (saisir date de naissance au format JJ/MM/AAAA) :");
         scanf("%10s", char_date);
         if (traitement_date(char_date, &birthdate.jour, &birthdate.mois,
                             &birthdate.annee)) {
+            etu->age = birthdate;
             if (confirm(true)) {
                 break;
             }
@@ -123,14 +147,14 @@ void saisie_age(etudiant *etu) {
 void saisie_formation(etudiant *etu) {
     do {
         printf("Formation etudiant :");
-        scanf("%2s", etu->formation);
+        scanf("%4s", etu->formation);
     } while (!confirm(true));
 }
 
 void saisie_groupe(etudiant *etu) {
     do {
         printf("Groupe etudiant :");
-        scanf("%i", &etu->groupe);
+        scanf("%hhu", &etu->groupe);
     } while (!confirm(true));
 }
 
@@ -139,7 +163,7 @@ void saisie_redoublant(etudiant *etu) {
     do {
         clean_str(selection);
         printf("Etudiant redoublant : (YES/NO)");
-        scanf("%2s", selection);
+        scanf("%3s", selection);
         etu->redoublant = (strcmp("YES", selection) == 0);
     } while (!confirm(true));
 }
@@ -152,18 +176,19 @@ void edit_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
         printf("Aucun etudiant enregistrer\n");
         return;
     }
-    for (uint8_t index_aff = 0; index_aff < *nb_etu; index_aff++) {
+    for (uint8_t index_aff = 1; index_aff <= *nb_etu; index_aff++) {
         afficher_etu(fiche, nb_etu, index_aff);
     }
     do {
         printf("Etudiant a modifer?");
         scanf("%i", &index_edit);
-        if (index_edit >= *nb_etu) {
+        if (index_edit > *nb_etu) {
             printf("Index saisie hors plage, aucun etudiant n'a encore ete "
                    "cree a cette adresse\n");
         }
-    } while (index_edit >= *nb_etu);
+    } while (index_edit > *nb_etu);
     afficher_etu(fiche, nb_etu, index_edit);
+    (*fiche)[index_edit].get_fiche(&edit_etu);
 selector:
     clean_str(selection);
     printf("Que souhaitez vous modifier? "
@@ -201,8 +226,7 @@ selector:
     scanf("%10s", selection);
     if ((strcmp(selection, "YES") == 0)) {
         goto selector;
-    }
-    if (confirm(false)) {
+    } else if (confirm(false)) {
         (*fiche)[index_edit].set_fiche(&edit_etu);
     }
 }
@@ -210,21 +234,21 @@ selector:
 void afficher_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu,
                   uint8_t index_aff) {
     etudiant aff_etu;
-    if (index_aff >= *nb_etu) {
+    if (index_aff > *nb_etu) {
         printf("Index saisi hors plage (%i/%i)", index_aff, *nb_etu);
-        index_aff = (*nb_etu)--;
+        index_aff = (*nb_etu);
     }
     (*fiche)[index_aff].get_fiche(&aff_etu);
-    printf("Etudiant %d enregistre :\n", index_aff + 1);
+    printf("Etudiant %d enregistre :\n", index_aff);
     printf(" - Nom : %16s\n", aff_etu.nom);
-    printf(" - Prenom : %16s\n - ", aff_etu.prenom);
-    printf(" - date de naissance : %d/%d/%d\n Age : %d\n", aff_etu.age.jour,
+    printf(" - Prenom : %16s\n", aff_etu.prenom);
+    printf(" - date de naissance : %i/%i/%i\n - Age : %i\n", aff_etu.age.jour,
            aff_etu.age.mois, aff_etu.age.annee, aff_etu.age.age);
-    printf(" - Formation : %2s", aff_etu.formation);
-    printf(" - groupe : %d", aff_etu.groupe);
+    printf(" - Formation : %4s\n", aff_etu.formation);
+    printf(" - groupe : %d\n", aff_etu.groupe);
     if (aff_etu.redoublant) {
-        printf(" - Redoublant");
+        printf(" - Redoublant\n");
     } else {
-        printf(" - Non redoublant");
+        printf(" - Non redoublant\n");
     }
 }
