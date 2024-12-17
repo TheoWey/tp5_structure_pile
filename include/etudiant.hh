@@ -6,6 +6,7 @@
 #include <memory>
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 
 #include "memory.hh"
 
@@ -62,7 +63,7 @@ struct etudiant {
     char prenom[16];
     char nom[16];
     date age;
-    char formation[4];
+    char formation[2];
     int groupe;
     bool redoublant;
 };

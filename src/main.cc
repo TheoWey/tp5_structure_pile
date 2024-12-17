@@ -33,7 +33,8 @@ void loop(void) {
             break;
         case operation::afficher:
             clean_str(answer);
-            printf("Un etudiant? Ou toute la base? (si 1 donner directement "
+            printf("Un etudiant? Ou toute la base? "
+                   "(si 1 seul a afficher donner directement "
                    "son numero, 'tout' pour toute la base 1->%i)",
                    nb_etu);
             scanf("%s", answer);

@@ -36,11 +36,16 @@ void fiche_etu::get_moyenne(float *moyenne) {
 }
 
 void new_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
-    smart_malloc(fiche, nb_etu);
+    try {
+        smart_malloc(fiche, nb_etu);
+    } catch (const std::exception &e) {
+        cout << "Erreur : " << e.what() << endl;
+    }
 }
 
 void init_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
     etudiant new_etu;
+    (*fiche)[*nb_etu - 1].get_fiche(&new_etu);
     char selection[10] = "";
     bool first_pass = true;
     if (first_pass) {
@@ -105,11 +110,10 @@ void init_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
 valide:
     first_pass = false;
     if (confirm(false)) {
-        (*fiche)[*nb_etu].set_fiche(&new_etu);
+        (*fiche)[*nb_etu - 1].set_fiche(&new_etu);
+    } else {
+        goto correction;
     }
-    // else {
-    //     goto correction;
-    // }
 }
 
 void saisie_prenom(etudiant *etu) {
@@ -147,7 +151,7 @@ void saisie_age(etudiant *etu) {
 void saisie_formation(etudiant *etu) {
     do {
         printf("Formation etudiant :");
-        scanf("%4s", etu->formation);
+        scanf("%2s", etu->formation);
     } while (!confirm(true));
 }
 
@@ -162,7 +166,7 @@ void saisie_redoublant(etudiant *etu) {
     char selection[4] = "";
     do {
         clean_str(selection);
-        printf("Etudiant redoublant : (YES/NO)");
+        printf("Etudiant redoublant(YES/NO) : ");
         scanf("%3s", selection);
         etu->redoublant = (strcmp("YES", selection) == 0);
     } while (!confirm(true));
@@ -184,10 +188,12 @@ void edit_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
         scanf("%i", &index_edit);
         if (index_edit > *nb_etu) {
             printf("Index saisie hors plage, aucun etudiant n'a encore ete "
-                   "cree a cette adresse\n");
+                   "cree a cette adresse (max %i)\n",
+                   *nb_etu);
         }
     } while (index_edit > *nb_etu);
     afficher_etu(fiche, nb_etu, index_edit);
+    index_edit -= 1;
     (*fiche)[index_edit].get_fiche(&edit_etu);
 selector:
     clean_str(selection);
@@ -234,17 +240,19 @@ selector:
 void afficher_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu,
                   uint8_t index_aff) {
     etudiant aff_etu;
-    if (index_aff > *nb_etu) {
-        printf("Index saisi hors plage (%i/%i)", index_aff, *nb_etu);
+    index_aff -= 1;
+    if (index_aff >= *nb_etu) {
+        printf("Index saisi hors plage (%i/%i)\n", index_aff, *nb_etu);
         index_aff = (*nb_etu);
     }
     (*fiche)[index_aff].get_fiche(&aff_etu);
-    printf("Etudiant %d enregistre :\n", index_aff);
-    printf(" - Nom : %16s\n", aff_etu.nom);
-    printf(" - Prenom : %16s\n", aff_etu.prenom);
-    printf(" - date de naissance : %i/%i/%i\n - Age : %i\n", aff_etu.age.jour,
-           aff_etu.age.mois, aff_etu.age.annee, aff_etu.age.age);
-    printf(" - Formation : %4s\n", aff_etu.formation);
+    printf("Etudiant %d enregistre :\n", index_aff + 1);
+    printf(" - Nom : %s\n", aff_etu.nom);
+    printf(" - Prenom : %s\n", aff_etu.prenom);
+    printf(" - date de naissance : %02i/%02i/%i\n - Age : %i\n",
+           aff_etu.age.jour, aff_etu.age.mois, aff_etu.age.annee,
+           aff_etu.age.age);
+    printf(" - Formation : %s\n", aff_etu.formation);
     printf(" - groupe : %d\n", aff_etu.groupe);
     if (aff_etu.redoublant) {
         printf(" - Redoublant\n");
