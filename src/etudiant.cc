@@ -19,6 +19,9 @@ void fiche_etu::get_fiche(etudiant *etu) {
 void fiche_etu::set_note(uint8_t *note, uint8_t num_note) {
     this->notes[num_note] = *note;
 }
+void fiche_etu::get_nbnote(uint8_t *nb_notes) {
+    *nb_notes = this->nb_notes;
+}
 void fiche_etu::get_note(uint8_t *note, uint8_t num_note) {
     *note = this->notes[num_note];
 }
@@ -33,6 +36,21 @@ void fiche_etu::get_moyenne(float *moyenne) {
         *moyenne += this->notes[i];
     }
     *moyenne /= this->nb_notes;
+}
+
+void fiche_etu::afficher(void) {
+    printf(" - Nom : %s\n", this->etu.nom);
+    printf(" - Prenom : %s\n", etu.prenom);
+    printf(" - date de naissance : %02i/%02i/%i\n - Age : %i\n",
+           this->etu.age.jour, this->etu.age.mois, this->etu.age.annee,
+           this->etu.age.age);
+    printf(" - Formation : %s\n", this->etu.formation);
+    printf(" - groupe : %d\n", this->etu.groupe);
+    if (this->etu.redoublant) {
+        printf(" - Redoublant\n");
+    } else {
+        printf(" - Non redoublant\n");
+    }
 }
 
 void new_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
@@ -75,7 +93,7 @@ void init_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
     if (!first_pass) {
     correction:
         clean_str(selection);
-        printf("Quel information modifier?");
+        printf("Quel information modifier ( valider)?");
         scanf("%s", selection);
         switch (selection[0]) {
         case info_etu::prenom:
@@ -96,7 +114,7 @@ void init_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
         case info_etu::redoublant:
             goto redoublement;
             break;
-        case 'O':
+        case info_etu::validation:
             goto valide;
             break;
         default:
@@ -116,6 +134,7 @@ valide:
     }
 }
 
+// generalisation?
 void saisie_prenom(etudiant *etu) {
     do {
         printf("Prenom etudiant :");
@@ -131,7 +150,7 @@ void saisie_nom(etudiant *etu) {
 }
 
 void saisie_age(etudiant *etu) {
-    char char_date[10];
+    char char_date[11];
     date birthdate;
     birthdate.age = 0;
     do {
@@ -171,6 +190,7 @@ void saisie_redoublant(etudiant *etu) {
         etu->redoublant = (strcmp("YES", selection) == 0);
     } while (!confirm(true));
 }
+//
 
 void edit_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
     char selection[10] = "";
@@ -193,7 +213,7 @@ void edit_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
         }
     } while (index_edit > *nb_etu);
     afficher_etu(fiche, nb_etu, index_edit);
-    index_edit -= 1;
+    index_edit--;
     (*fiche)[index_edit].get_fiche(&edit_etu);
 selector:
     clean_str(selection);
@@ -240,23 +260,60 @@ selector:
 void afficher_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu,
                   uint8_t index_aff) {
     etudiant aff_etu;
-    index_aff -= 1;
     if (index_aff >= *nb_etu) {
         printf("Index saisi hors plage (%i/%i)\n", index_aff, *nb_etu);
         index_aff = (*nb_etu);
     }
-    (*fiche)[index_aff].get_fiche(&aff_etu);
-    printf("Etudiant %d enregistre :\n", index_aff + 1);
-    printf(" - Nom : %s\n", aff_etu.nom);
-    printf(" - Prenom : %s\n", aff_etu.prenom);
-    printf(" - date de naissance : %02i/%02i/%i\n - Age : %i\n",
-           aff_etu.age.jour, aff_etu.age.mois, aff_etu.age.annee,
-           aff_etu.age.age);
-    printf(" - Formation : %s\n", aff_etu.formation);
-    printf(" - groupe : %d\n", aff_etu.groupe);
-    if (aff_etu.redoublant) {
-        printf(" - Redoublant\n");
-    } else {
-        printf(" - Non redoublant\n");
+    printf("Etudiant %d enregistre :\n", index_aff);
+    index_aff--;
+    (*fiche)[index_aff].afficher();
+}
+
+void noter(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
+    char answer[9];
+    uint8_t num_etu, nb_notes, note;
+    clean_str(answer);
+    printf("Ajouter noter ou Modifier note?");
+    scanf("%9s", answer);
+    if (strcmp(answer, "Modifier") == 0) {
+        do {
+            printf("etudiant a noter (1->%i) : ", *nb_etu);
+            scanf("%i", &num_etu);
+            if (num_etu > *nb_etu) {
+                printf("saisi hors plage max : %i", *nb_etu);
+            }
+        } while (num_etu > *nb_etu);
+        num_etu--;
+        (*fiche)[num_etu].get_nbnote(&nb_notes);
+        for (uint8_t i = 0; i < nb_notes; i++) {
+            (*fiche)[num_etu].get_note(&note, i);
+            printf("note %i : %i", i, note);
+        }
+    } else if (strcmp(answer, "ajouter") == 0) {
+        do {
+            printf("etudiant a noter (1->%i) : ", *nb_etu);
+            scanf("%i", &num_etu);
+            if (num_etu > *nb_etu) {
+                printf("saisi hors plage max : %i", *nb_etu);
+            }
+        } while (num_etu > *nb_etu);
+        num_etu--;
+        (*fiche)[num_etu].add_note();
+        (*fiche)[num_etu].get_nbnote(&nb_notes);
+        printf("votre note : ");
+        scanf("%i", &note);
+        (*fiche)[num_etu].set_note(&note, nb_notes - 1);
+    } else if (strcmp("moyenne", answer) == 0) {
+        float moy;
+        do {
+            printf("etudiant a noter (1->%i) : ", *nb_etu);
+            scanf("%i", &num_etu);
+            if (num_etu > *nb_etu) {
+                printf("saisi hors plage max : %i", *nb_etu);
+            }
+        } while (num_etu > *nb_etu);
+        num_etu--;
+        (*fiche)[num_etu].get_moyenne(&moy);
+        printf("moyenne actuel : %f\n", moy);
     }
 }

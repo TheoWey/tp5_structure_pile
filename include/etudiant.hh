@@ -3,10 +3,10 @@
 #include <cstdint>
 #include <cstring>
 #include <ctime>
+#include <iostream>
 #include <memory>
 #include <stdio.h>
 #include <stdlib.h>
-#include <iostream>
 
 #include "memory.hh"
 
@@ -80,7 +80,8 @@ enum info_etu {
     age = 'a',
     formation = 'f',
     groupe = 'g',
-    redoublant = 'r'
+    redoublant = 'r',
+    validation = 'v'
 };
 
 using namespace std;
@@ -97,7 +98,6 @@ class fiche_etu {
     etudiant etu;
     uint8_t nb_notes = 0;
     unique_ptr<float[]> notes = make_unique<float[]>(this->nb_notes);
-    void add_note(void);
 
   public:
     fiche_etu();
@@ -124,9 +124,13 @@ class fiche_etu {
     void get_fiche(etudiant *fiche_etu);
     void set_fiche(etudiant *fiche_etu);
 
+    void add_note(void);
     void set_note(uint8_t *note, uint8_t num_note);
+    void get_nbnote(uint8_t *nb_notes);
     void get_note(uint8_t *note, uint8_t num_note);
     void get_moyenne(float *moyenne);
+
+    void afficher(void);
 };
 
 #pragma endregion // declaration des variables
@@ -163,6 +167,7 @@ void saisie_redoublant(etudiant *etu);
 void edit_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu);
 void afficher_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu,
                   uint8_t index_aff);
+void noter(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu);
 
 #pragma endregion // declaration des fonctions
 #endif

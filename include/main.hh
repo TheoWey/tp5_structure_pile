@@ -22,7 +22,7 @@ const etudiant name3 = {"laballe", "saitlire"};
 const etudiant name4 = {"jean", "pierre"};
 const etudiant name5 = {"arture", "guillere"};
 
-enum operation { modifier = 'd', ajouter = 'o', noter = 't',afficher = 'f' };
+enum operation { modifier = 'd', ajouter = 'o', note = 't',afficher = 'f' };
 
 const uint8_t MAX_NB_ETU = 255;
 

@@ -72,7 +72,6 @@ bool confirm(bool single) {
 
 void clean_str(char *str) {
     for (uint8_t i = 0; i < sizeof(str) / sizeof(char); i++) {
-        str[i] = ' ';
-        // *(str+1) =' ';
+        str[i] = '\0';
     }
 }

@@ -17,8 +17,8 @@ void loop(void) {
     unique_ptr<fiche_etu[]> fiche = make_unique<fiche_etu[]>(nb_etu);
     while (1) {
         clean_str(answer);
-        printf("Operation a realiser (Modifier, Ajouter (etudiant), "
-               "Afficher,noter)");
+        printf("Operation a realiser "
+               "(Modifier, Ajouter (etudiant),Afficher,noter)");
         scanf("%s", answer); // rendre non bloquant?
         switch (answer[2]) {
         case operation::ajouter:
@@ -28,8 +28,8 @@ void loop(void) {
         case operation::modifier:
             edit_etu(&fiche, &nb_etu);
             break;
-        case operation::noter:
-            /* code */
+        case operation::note:
+            noter(&fiche, &nb_etu);
             break;
         case operation::afficher:
             clean_str(answer);
