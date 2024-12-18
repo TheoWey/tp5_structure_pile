@@ -7,13 +7,15 @@ SRCDIR   = src
 INCDIR   = include
 
 
-SRC    = $(wildcard $(SRCDIR)/*.cc)				# Utilisation du répertoire src pour les fichiers .c
-HEADER = $(SRC:$(SRCDIR)/%.cc=$(INCDIR)/%.h)	# Utilisation du répertoire include pour les fichiers .h
-OBJ    = $(SRC:$(SRCDIR)/%.cc=$(OBJDIR)/%.o) 	# Utilisation du répertoire Build/obj pour les fichiers .o
+SRC       = $(wildcard $(SRCDIR)/*.cc)				# Utilisation du répertoire src pour les fichiers .c
+HEADER_H  = $(SRC:$(SRCDIR)/%.cc=$(INCDIR)/%.h)
+HEADER_HH = $(SRC:$(SRCDIR)/%.cc=$(INCDIR)/%.hh)
+HEADER    = $(HEADER_HH)	# Utilisation du répertoire include pour les fichiers .h
+OBJ       = $(SRC:$(SRCDIR)/%.cc=$(OBJDIR)/%.o) 	# Utilisation du répertoire Build/obj pour les fichiers .o
 
 # Linkers
 CXX    = g++
-FLAGS  = -Wall -g -I$(INCDIR)
+FLAGS  = -Wall -O1 -I$(INCDIR)
 TARGET = prog.exe
 
 # Create the build directory if it doesn't exist

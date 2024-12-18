@@ -1,0 +1,4 @@
+build/prog.exe
+build/obj/etudiant.o
+build/obj/main.o
+build/obj/memory.o
