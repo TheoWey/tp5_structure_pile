@@ -16,29 +16,7 @@ void fiche_etu::get_fiche(etudiant *etu) {
     *etu = this->etu;
 }
 
-void fiche_etu::set_note(float *note, uint8_t num_note) {
-    this->notes[num_note] = *note;
-}
-void fiche_etu::get_nbnote(uint8_t *nb_notes) {
-    *nb_notes = this->nb_notes;
-}
-void fiche_etu::get_note(float *note, uint8_t num_note) {
-    *note = this->notes[num_note];
-}
-
-void fiche_etu::add_note(void) {
-    smart_malloc(&(this->notes), &(this->nb_notes));
-}
-
-void fiche_etu::get_moyenne(float *moyenne) {
-    *moyenne = 0;
-    for (uint8_t i = 0; i < this->nb_notes; i++) {
-        *moyenne += this->notes[i];
-    }
-    *moyenne /= this->nb_notes;
-}
-
-void fiche_etu::afficher(void) {
+void fiche_etu::prompt_etu(void) {
     printf(" - Nom : %s\n", this->etu.nom);
     printf(" - Prenom : %s\n", etu.prenom);
     printf(" - date de naissance : %02i/%02i/%i\n - Age : %i\n",
@@ -68,27 +46,27 @@ void init_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
     bool first_pass = true;
     if (first_pass) {
     prenom:
-        saisie_prenom(&new_etu);
+        saisie(&new_etu.prenom, "Prenom etudiant :", "%16s");
     }
     if (first_pass) {
     nom:
-        saisie_nom(&new_etu);
+        saisie(&new_etu.nom, "Nom etudiant :", "%16s");
     }
     if (first_pass) {
     age:
-        saisie_age(&new_etu);
+        saisie(&new_etu.age);
     }
     if (first_pass) {
     formation:
-        saisie_formation(&new_etu);
+        saisie(&new_etu.formation, "Formation etudiant :", "%2s");
     }
     if (first_pass) {
     groupe:
-        saisie_groupe(&new_etu);
+        saisie(&new_etu.groupe, "Groupe etudiant :", "%hhu");
     }
     if (first_pass) {
     redoublement:
-        saisie_redoublant(&new_etu);
+        saisie(&new_etu.redoublant);
     }
     if (!first_pass) {
     correction:
@@ -134,32 +112,26 @@ valide:
     }
 }
 
-// generalisation?
-void saisie_prenom(etudiant *etu) {
+template <typename Type>
+void saisie(Type *var, const char *prompt, const char *format) {
     do {
-        printf("Prenom etudiant :");
-        scanf("%16s", etu->prenom);
+        printf(prompt);
+        scanf(format, var);
     } while (!confirm(true));
 }
+template void saisie<char>(char *var, const char *prompt, const char *format);
+template void saisie<uint8_t>(uint8_t *var, const char *prompt,
+                              const char *format);
 
-void saisie_nom(etudiant *etu) {
-    do {
-        printf("Nom etudiant :");
-        scanf("%16s", etu->nom);
-    } while (!confirm(true));
-}
-
-void saisie_age(etudiant *etu) {
+void saisie(date *birthdate) {
     char char_date[11];
-    date birthdate;
-    birthdate.age = 0;
+    birthdate->age = 0;
     do {
         printf(
             "Age etudiant (saisir date de naissance au format JJ/MM/AAAA) :");
         scanf("%10s", char_date);
-        if (traitement_date(char_date, &birthdate.jour, &birthdate.mois,
-                            &birthdate.annee)) {
-            etu->age = birthdate;
+        if (traitement_date(char_date, &(birthdate->jour), &(birthdate->mois),
+                            &(birthdate->annee))) {
             if (confirm(true)) {
                 break;
             }
@@ -167,30 +139,15 @@ void saisie_age(etudiant *etu) {
     } while (true);
 }
 
-void saisie_formation(etudiant *etu) {
-    do {
-        printf("Formation etudiant :");
-        scanf("%2s", etu->formation);
-    } while (!confirm(true));
-}
-
-void saisie_groupe(etudiant *etu) {
-    do {
-        printf("Groupe etudiant :");
-        scanf("%hhu", &etu->groupe);
-    } while (!confirm(true));
-}
-
-void saisie_redoublant(etudiant *etu) {
+void saisie(bool *redoublant) {
     char selection[4] = "";
     do {
         clean_str(selection);
         printf("Etudiant redoublant(YES/NO) : ");
         scanf("%3s", selection);
-        etu->redoublant = (strcmp("YES", selection) == 0);
+        *redoublant = (strcmp("YES", selection) == 0);
     } while (!confirm(true));
 }
-//
 
 void edit_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
     char selection[10] = "";
@@ -222,22 +179,22 @@ selector:
     scanf("%10s", selection);
     switch (selection[0]) {
     case info_etu::nom:
-        saisie_nom(&edit_etu);
+        saisie(&edit_etu.nom, "Nom etudiant :", "%16s");
         break;
     case info_etu::prenom:
-        saisie_prenom(&edit_etu);
+        saisie(&edit_etu.prenom, "Prenom etudiant :", "%16s");
         break;
     case info_etu::age:
-        saisie_age(&edit_etu);
+        saisie(&edit_etu.age);
         break;
     case info_etu::formation:
-        saisie_formation(&edit_etu);
+        saisie(&edit_etu.formation, "Formation etudiant :", "%2s");
         break;
     case info_etu::groupe:
-        saisie_groupe(&edit_etu);
+        saisie(&edit_etu.groupe, "Groupe etudiant :", "%hhu");
         break;
     case info_etu::redoublant:
-        saisie_redoublant(&edit_etu);
+        saisie(&edit_etu.redoublant);
         break;
     case 'F':
         return;
@@ -266,55 +223,41 @@ void afficher_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu,
     }
     printf("Etudiant %d enregistre :\n", index_aff);
     index_aff--;
-    (*fiche)[index_aff].afficher();
+    (*fiche)[index_aff].prompt_etu();
 }
 
-void noter(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
-    char answer[9];
-    uint8_t num_etu, nb_notes;
-    float note;
-    clean_str(answer);
-    printf("Ajouter noter ou Modifier note?");
-    scanf("%9s", answer);
-    if (strcmp(answer, "Modifier") == 0) {
-        do {
-            printf("etudiant a noter (1->%i) : ", *nb_etu);
-            scanf("%i", &num_etu);
-            if (num_etu > *nb_etu) {
-                printf("saisi hors plage max : %i", *nb_etu);
-            }
-        } while (num_etu > *nb_etu);
-        num_etu--;
-        (*fiche)[num_etu].get_nbnote(&nb_notes);
-        for (uint8_t i = 0; i < nb_notes; i++) {
-            (*fiche)[num_etu].get_note(&note, i);
-            printf("note %f : %i", i, note);
-        }
-    } else if (strcmp(answer, "ajouter") == 0) {
-        do {
-            printf("etudiant a noter (1->%i) : ", *nb_etu);
-            scanf("%i", &num_etu);
-            if (num_etu > *nb_etu) {
-                printf("saisi hors plage max : %i", *nb_etu);
-            }
-        } while (num_etu > *nb_etu);
-        num_etu--;
-        (*fiche)[num_etu].add_note();
-        (*fiche)[num_etu].get_nbnote(&nb_notes);
-        printf("votre note : ");
-        scanf("%f", &note);
-        (*fiche)[num_etu].set_note(&note, nb_notes - 1);
-    } else if (strcmp("moyenne", answer) == 0) {
-        float moy;
-        do {
-            printf("etudiant a noter (1->%i) : ", *nb_etu);
-            scanf("%i", &num_etu);
-            if (num_etu > *nb_etu) {
-                printf("saisi hors plage max : %i", *nb_etu);
-            }
-        } while (num_etu > *nb_etu);
-        num_etu--;
-        (*fiche)[num_etu].get_moyenne(&moy);
-        printf("moyenne actuel : %f\n", moy);
-    }
-}
+// void noter(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu) {
+//     char answer[9];
+//     uint8_t num_etu, nb_notes, num_note;
+//     float note;
+//     (*fiche)[num_etu].get_nbnote(&nb_notes);
+//     clean_str(answer);
+//     printf("Ajouter noter ou Modifier note?");
+//     scanf("%9s", answer);
+//     do {
+//         printf("etudiant a noter (1->%i) : ", *nb_etu);
+//         scanf("%i", &num_etu);
+//         if (num_etu > *nb_etu) {
+//             printf("saisi hors plage max : %i", *nb_etu);
+//         }
+//     } while (num_etu > *nb_etu);
+//     num_etu--;
+//     if (strcmp(answer, "Modifier") == 0) {
+//         (*fiche)[num_etu].prompt_grade();
+//         do {
+//             printf("note a corriger : ");
+//             scanf("%i", &num_note);
+//         } while (num_note > nb_notes);
+//         num_note--;
+//         saisie_note(&note);
+//         (*fiche)[num_etu].set_note(&note, nb_notes - 1);
+
+//     } else if (strcmp(answer, "ajouter") == 0) {
+//         (*fiche)[num_etu].add_note();
+//         saisie_note(&note);
+//         (*fiche)[num_etu].set_note(&note, nb_notes - 1);
+
+//     } else if (strcmp("moyenne", answer) == 0) {
+//         (*fiche)[num_etu].prompt_mean();
+//     }
+// }
