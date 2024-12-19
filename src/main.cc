@@ -21,17 +21,17 @@ void loop(void) {
                "(Modifier, Ajouter (etudiant),Afficher,noter)");
         scanf("%s", answer); // rendre non bloquant?
         switch (answer[2]) {
-        case operation::ajouter:
+        case ajouter:
             new_etu(&fiche, &nb_etu);
             init_etu(&fiche, &nb_etu);
             break;
-        case operation::modifier:
+        case modifier:
             edit_etu(&fiche, &nb_etu);
             break;
-        case operation::note:
+        case note:
             noter(&fiche, &nb_etu);
             break;
-        case operation::afficher:
+        case afficher:
             clean_str(answer);
             printf("Un etudiant? Ou toute la base? "
                    "(si 1 seul a afficher donner directement "

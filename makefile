@@ -15,7 +15,10 @@ OBJ       = $(SRC:$(SRCDIR)/%.cc=$(OBJDIR)/%.o) 	# Utilisation du répertoire Bu
 
 # Linkers
 CXX    = g++
-FLAGS  = -Wall -O1 -I$(INCDIR)
+DEBUG_FLAGS = -Wall -g -I$(INCDIR)
+OPT_FLAGS1   = -Wall -O1 -I$(INCDIR)
+OPT_FLAGS   = -Wall -O2 -I$(INCDIR)
+
 TARGET = prog.exe
 
 # Create the build directory if it doesn't exist
@@ -25,7 +28,16 @@ $(shell mkdir $(BUILDDIR))
 $(shell mkdir $(OBJDIR))
 
 # Default rule
+all: FLAGS = $(OPT_FLAGS1)
 all: $(BUILDDIR)/$(TARGET)
+
+# Debug build
+debug: FLAGS = $(DEBUG_FLAGS)
+debug: clean all
+
+# Optimized build
+release: FLAGS = $(OPT_FLAGS)
+release: clean all
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cc $(HEADER)
 	$(CXX) $(FLAGS) -o $@ -c $< 

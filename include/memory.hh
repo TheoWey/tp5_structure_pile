@@ -14,6 +14,7 @@
 #pragma region // manage dependancy
 
 #include "etudiant.hh"
+#include "matiere.hh"
 
 #pragma endregion // manage dependancy
 
