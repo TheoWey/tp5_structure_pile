@@ -9,6 +9,7 @@
 #include <stdlib.h>
 
 #include "memory.hh"
+#include "matiere.hh"
 
 #pragma endregion // librairie externes
 
@@ -99,16 +100,19 @@ class fiche_etu {
   private:
     etudiant etu;
     uint8_t nb_matieres = 0;
-    unique_ptr<matiere[]> matieres = make_unique<matiere[]>(nb_matieres);
-
+    void add_matiere(void);
+    
   public:
+    unique_ptr<matiere[]> matieres = make_unique<matiere[]>(nb_matieres);
     fiche_etu();
     ~fiche_etu();
     // Custom copy constructor
     fiche_etu(const fiche_etu &other)
         : etu(other.etu), nb_matieres(other.nb_matieres),
           matieres(make_unique<matiere[]>(other.nb_matieres)) {
-        std::copy(other.matieres.get(), other.matieres.get() + nb_matieres, matieres.get());
+        for (uint8_t i = 0; i < nb_matieres; ++i) {
+            matieres[i] = other.matieres[i];
+        }
     }
 
     // Custom copy assignment operator
@@ -117,8 +121,9 @@ class fiche_etu {
             etu = other.etu;
             nb_matieres = other.nb_matieres;
             matieres = make_unique<matiere[]>(other.nb_matieres);
-            std::copy(other.matieres.get(), other.matieres.get() + nb_matieres,
-                      matieres.get());
+            for (uint8_t i = 0; i < nb_matieres; ++i) {
+                matieres[i] = other.matieres[i];
+            }
         }
         return *this;
     }
@@ -126,12 +131,24 @@ class fiche_etu {
     void get_fiche(etudiant *fiche_etu);
     void set_fiche(etudiant *fiche_etu);
 
+    bool set_matiere(matiere *mat, uint8_t index);
+
     void prompt_etu(void);
 };
 
 #pragma endregion // declaration des variables
 
 #pragma region // declaration des fonctions
+
+/**
+ * @brief Displays a menu to edit student information.
+ *
+ * This function displays a menu to edit student information and prompts the user
+ * to select a field to edit.
+ *
+ * @param edit_etu A pointer to the student record to edit.
+ */
+void menu_edit_etu(etudiant *edit_etu);
 
 /**
  * @brief Creates a new array of student records.
