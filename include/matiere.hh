@@ -17,6 +17,7 @@
 
 #pragma region // declaration des variables
 
+const uint8_t MAX_NB_MATIERES = 255;
 const uint8_t MAX_NB_NOTES = 255;
 
 typedef struct {
@@ -42,9 +43,11 @@ class matiere {
     // Custom copy constructor
     matiere(const matiere &other)
         : nb_notes(other.nb_notes),
-          notes(make_unique<grade[]>(other.nb_notes)) {
+          notes(nb_notes ? make_unique<grade[]>(other.nb_notes) : nullptr) {
         strcpy(nom, other.nom);
-        std::copy(other.notes.get(), other.notes.get() + nb_notes, notes.get());
+        if (nb_notes) {
+            std::copy(other.notes.get(), other.notes.get() + nb_notes, notes.get());
+        }
     }
 
     // Custom copy assignment operator
@@ -52,15 +55,19 @@ class matiere {
         if (this != &other) { // Check for self-assignment
             strcpy(nom, other.nom);
             nb_notes = other.nb_notes;
-            notes = make_unique<grade[]>(other.nb_notes);
-            std::copy(other.notes.get(), other.notes.get() + nb_notes,
-                      notes.get());
+            notes = nb_notes ? make_unique<grade[]>(other.nb_notes) : nullptr;
+            if (nb_notes) {
+                std::copy(other.notes.get(), other.notes.get() + nb_notes, notes.get());
+            }
         }
         return *this;
     }
 
-    void get_matiere(char *mat);
-    void set_matiere(char *mat);
+    void get_matiere_name(char *mat);
+    void set_matiere_name(char *mat);
+
+    void get_matiere_coef(uint8_t *coef);
+    void set_matiere_coef(uint8_t coef);
 
     bool set_grade(grade *note, uint8_t num_note);
     void get_nbgrade(uint8_t *nb_notes);
