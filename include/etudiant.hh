@@ -9,6 +9,7 @@
 #include <stdlib.h>
 
 #include "memory.hh"
+#include "matiere.hh"
 
 #pragma endregion // librairie externes
 
@@ -16,6 +17,8 @@
 #define ETUDIANT_H
 
 #pragma region // declaration des variables
+
+const uint8_t MAX_NB_ETU = 255;
 
 enum mois {
     janvier,
@@ -96,27 +99,31 @@ using namespace std;
 class fiche_etu {
   private:
     etudiant etu;
-    uint8_t nb_notes = 0;
-    unique_ptr<float[]> notes = make_unique<float[]>(this->nb_notes);
-
+    uint8_t nb_matieres = 0;
+    void add_matiere(void);
+    
   public:
+    unique_ptr<matiere[]> matieres = make_unique<matiere[]>(nb_matieres);
     fiche_etu();
     ~fiche_etu();
     // Custom copy constructor
     fiche_etu(const fiche_etu &other)
-        : etu(other.etu), nb_notes(other.nb_notes),
-          notes(make_unique<float[]>(other.nb_notes)) {
-        std::copy(other.notes.get(), other.notes.get() + nb_notes, notes.get());
+        : etu(other.etu), nb_matieres(other.nb_matieres),
+          matieres(make_unique<matiere[]>(other.nb_matieres)) {
+        for (uint8_t i = 0; i < nb_matieres; ++i) {
+            matieres[i] = other.matieres[i];
+        }
     }
 
     // Custom copy assignment operator
     fiche_etu &operator=(const fiche_etu &other) {
         if (this != &other) { // Check for self-assignment
             etu = other.etu;
-            nb_notes = other.nb_notes;
-            notes = make_unique<float[]>(other.nb_notes);
-            std::copy(other.notes.get(), other.notes.get() + nb_notes,
-                      notes.get());
+            nb_matieres = other.nb_matieres;
+            matieres = make_unique<matiere[]>(other.nb_matieres);
+            for (uint8_t i = 0; i < nb_matieres; ++i) {
+                matieres[i] = other.matieres[i];
+            }
         }
         return *this;
     }
@@ -124,18 +131,24 @@ class fiche_etu {
     void get_fiche(etudiant *fiche_etu);
     void set_fiche(etudiant *fiche_etu);
 
-    void add_note(void);
-    void set_note(float *note, uint8_t num_note);
-    void get_nbnote(uint8_t *nb_notes);
-    void get_note(float *note, uint8_t num_note);
-    void get_moyenne(float *moyenne);
+    bool set_matiere(matiere *mat, uint8_t index);
 
-    void afficher(void);
+    void prompt_etu(void);
 };
 
 #pragma endregion // declaration des variables
 
 #pragma region // declaration des fonctions
+
+/**
+ * @brief Displays a menu to edit student information.
+ *
+ * This function displays a menu to edit student information and prompts the user
+ * to select a field to edit.
+ *
+ * @param edit_etu A pointer to the student record to edit.
+ */
+void menu_edit_etu(etudiant *edit_etu);
 
 /**
  * @brief Creates a new array of student records.
@@ -158,12 +171,7 @@ void new_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu);
  * @param nb_etu A pointer to the number of students.
  */
 void init_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu);
-void saisie_prenom(etudiant *etu);
-void saisie_nom(etudiant *etu);
-void saisie_age(etudiant *etu);
-void saisie_formation(etudiant *etu);
-void saisie_groupe(etudiant *etu);
-void saisie_redoublant(etudiant *etu);
+
 void edit_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu);
 void afficher_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu,
                   uint8_t index_aff);

@@ -14,6 +14,7 @@
 #pragma region // manage dependancy
 
 #include "etudiant.hh"
+#include "matiere.hh"
 
 #pragma endregion // manage dependancy
 
@@ -67,6 +68,12 @@ void smart_malloc(unique_ptr<T[]> *array, uint8_t *dim_array);
  */
 bool traitement_date(char date[], uint8_t *day, uint8_t *month, uint32_t *year);
 
+template <typename Type>
+void saisie(Type *var, const char *prompt, const char *format);
+void saisie(date *birthdate);
+void saisie(bool *redoublant);
+
+void ask_index(const char *prompt, uint8_t *index, uint8_t *index_max);
 /**
  * @brief Prompts the user for confirmation and returns a boolean value.
  *

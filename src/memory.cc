@@ -25,6 +25,8 @@ void smart_malloc(unique_ptr<T[]> *array, uint8_t *dim_array) {
 template void smart_malloc<float>(std::unique_ptr<float[]> *, uint8_t *);
 template void smart_malloc<fiche_etu>(std::unique_ptr<fiche_etu[]> *,
                                       uint8_t *);
+template void smart_malloc<grade>(std::unique_ptr<grade[]> *, uint8_t *);
+template void smart_malloc<matiere>(std::unique_ptr<matiere[]> *, uint8_t *);
 
 bool traitement_date(char date[], uint8_t *day, uint8_t *month,
                      uint32_t *year) {
@@ -36,7 +38,7 @@ bool traitement_date(char date[], uint8_t *day, uint8_t *month,
     if (dateLength != 10 || date[2] != '/' || date[5] != '/') {
         // std::cerr << "Invalid date format. Expected DD/MM/YY." << std::endl;
         printf("Format attendu JJ/MM/AAAA : 06/12/2000 par exemple\n");
-        goto error; // Exit the function if the format is incorrect
+        return false; // function failed
     }
     for (uint8_t i = 0; i < dateLength; i++) {
         if (date[i] == '/') {
@@ -51,13 +53,75 @@ bool traitement_date(char date[], uint8_t *day, uint8_t *month,
     }
     *day = atoi(extract[0]);
     *month = atoi(extract[1]);
-    if (*month > 12) {
-        goto error; // exit fonction if month out of range
-    }
     *year = atoi(extract[2]);
-    return 1; // function success
-error:
-    return 0;
+    if (*month > 12 || *day > 31) {
+        printf("Date invalide\n");
+        return false; // function failed
+    }
+    if (*month == 2) {
+        bool isLeapYear =
+            (*year % 4 == 0 && (*year % 100 != 0 || *year % 400 == 0));
+        if (*day > (isLeapYear ? 29 : 28)) {
+            printf("Date invalide\n");
+            return false;
+        }
+    }
+    if (*month == 4 || *month == 6 || *month == 9 || *month == 11) {
+        if (*day > 30) {
+            printf("Date invalide\n");
+            return false;
+        }
+    }
+    return true; // function success
+}
+
+template <typename Type>
+void saisie(Type *var, const char *prompt, const char *format) {
+    do {
+        printf(prompt);
+        scanf(format, var);
+    } while (!confirm(true));
+}
+template void saisie<char>(char var[], const char *prompt, const char *format);
+template void saisie<int>(int *var, const char *prompt,
+                              const char *format);
+template void saisie<float>(float *var, const char *prompt,
+                               const char *format);
+
+void saisie(date *birthdate) {
+    char char_date[11];
+    birthdate->age = 0;
+    do {
+        printf(
+            "Age etudiant (saisir date de naissance au format JJ/MM/AAAA) :");
+        scanf("%10s", char_date);
+        if (traitement_date(char_date, &(birthdate->jour), &(birthdate->mois),
+                            &(birthdate->annee))) {
+            if (confirm(true)) {
+                break;
+            }
+        }
+    } while (true);
+}
+
+void saisie(bool *redoublant) {
+    char selection[4] = "";
+    do {
+        clean_str(selection);
+        printf("Etudiant redoublant(YES/NO) : ");
+        scanf("%3s", selection);
+        *redoublant = (strcmp("YES", selection) == 0);
+    } while (!confirm(true));
+}
+
+void ask_index(const char *prompt, uint8_t *index, uint8_t *index_max) {
+        do {
+        printf(prompt, *index);
+        scanf("%i", index);
+        if (*index > *index_max) {
+            printf("saisi hors plage max : %i", *index_max);
+        }
+    } while (*index > *index_max);
 }
 
 bool confirm(bool single) {
