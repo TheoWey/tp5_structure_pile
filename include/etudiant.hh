@@ -17,6 +17,8 @@
 
 #pragma region // declaration des variables
 
+const uint8_t MAX_NB_ETU = 255;
+
 enum mois {
     janvier,
     fevrier,
@@ -96,27 +98,27 @@ using namespace std;
 class fiche_etu {
   private:
     etudiant etu;
-    uint8_t nb_notes = 0;
-    unique_ptr<float[]> notes = make_unique<float[]>(this->nb_notes);
+    uint8_t nb_matieres = 0;
+    unique_ptr<matiere[]> matieres = make_unique<matiere[]>(nb_matieres);
 
   public:
     fiche_etu();
     ~fiche_etu();
     // Custom copy constructor
     fiche_etu(const fiche_etu &other)
-        : etu(other.etu), nb_notes(other.nb_notes),
-          notes(make_unique<float[]>(other.nb_notes)) {
-        std::copy(other.notes.get(), other.notes.get() + nb_notes, notes.get());
+        : etu(other.etu), nb_matieres(other.nb_matieres),
+          matieres(make_unique<matiere[]>(other.nb_matieres)) {
+        std::copy(other.matieres.get(), other.matieres.get() + nb_matieres, matieres.get());
     }
 
     // Custom copy assignment operator
     fiche_etu &operator=(const fiche_etu &other) {
         if (this != &other) { // Check for self-assignment
             etu = other.etu;
-            nb_notes = other.nb_notes;
-            notes = make_unique<float[]>(other.nb_notes);
-            std::copy(other.notes.get(), other.notes.get() + nb_notes,
-                      notes.get());
+            nb_matieres = other.nb_matieres;
+            matieres = make_unique<matiere[]>(other.nb_matieres);
+            std::copy(other.matieres.get(), other.matieres.get() + nb_matieres,
+                      matieres.get());
         }
         return *this;
     }
@@ -153,15 +155,6 @@ void new_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu);
  */
 void init_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu);
 
-template <typename Type>
-void saisie(Type *var, const char *prompt, const char *format);
-
-void saisie_age(etudiant *etu);
-void saisie_redoublant(etudiant *etu);
-void saisie(date *birthdate);
-void saisie(bool *redoublant);
-
-void saisie_note(float *note);
 void edit_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu);
 void afficher_etu(unique_ptr<fiche_etu[]> *fiche, uint8_t *nb_etu,
                   uint8_t index_aff);
