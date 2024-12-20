@@ -17,6 +17,8 @@
 
 #pragma region // declaration des variables
 
+const uint8_t MAX_NB_NOTES = 255;
+
 typedef struct {
     float grades;
     float bareme;
@@ -28,7 +30,10 @@ class matiere {
     char nom[16];
     uint8_t nb_notes = 0;
     unique_ptr<grade[]> notes = make_unique<grade[]>(this->nb_notes);
-    void add_note(void);
+    float mean = 0;
+    uint8_t coef_matiere = 1;
+    void add_grade(void);
+    void calc_mean(void);
 
   public:
     matiere();
@@ -57,11 +62,13 @@ class matiere {
     void get_matiere(char *mat);
     void set_matiere(char *mat);
 
-    bool set_note(grade *note, uint8_t num_note);
-    void get_nbnote(uint8_t *nb_notes);
-    void get_note(grade *note, uint8_t num_note);
+    bool set_grade(grade *note, uint8_t num_note);
+    void get_nbgrade(uint8_t *nb_notes);
+    void get_grade(grade *note, uint8_t num_note);
 
-    void prompt_grade(void);
+    void get_mean(float *mean, uint8_t *coef);
+
+    void prompt_grades(void);
     void prompt_mean(void);
 };
 
