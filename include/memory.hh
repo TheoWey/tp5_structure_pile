@@ -73,6 +73,7 @@ void saisie(Type *var, const char *prompt, const char *format);
 void saisie(date *birthdate);
 void saisie(bool *redoublant);
 
+void ask_index(const char *prompt, uint8_t *index, uint8_t *index_max);
 /**
  * @brief Prompts the user for confirmation and returns a boolean value.
  *

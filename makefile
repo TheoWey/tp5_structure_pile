@@ -14,7 +14,7 @@ HEADER    = $(HEADER_HH)	# Utilisation du répertoire include pour les fichiers 
 OBJ       = $(SRC:$(SRCDIR)/%.cc=$(OBJDIR)/%.o) 	# Utilisation du répertoire Build/obj pour les fichiers .o
 
 # Linkers
-CXX    = g++
+CXX    = g++ -Wno-unknown-pragmas
 DEBUG_FLAGS = -Wall -g -I$(INCDIR)
 OPT_FLAGS1   = -Wall -O1 -I$(INCDIR)
 OPT_FLAGS   = -Wall -O2 -I$(INCDIR)
@@ -22,10 +22,10 @@ OPT_FLAGS   = -Wall -O2 -I$(INCDIR)
 TARGET = prog.exe
 
 # Create the build directory if it doesn't exist
-$(shell mkdir $(BUILDDIR))
+$(shell if not exist $(BUILDDIR) mkdir $(BUILDDIR))
 
 # Create the object directory if it doesn't exist
-$(shell mkdir $(OBJDIR))
+$(shell if not exist $(OBJDIR) mkdir $(OBJDIR))
 
 # Default rule
 all: FLAGS = $(OPT_FLAGS1)
@@ -33,11 +33,11 @@ all: $(BUILDDIR)/$(TARGET)
 
 # Debug build
 debug: FLAGS = $(DEBUG_FLAGS)
-debug: clean all
+debug: $(BUILDDIR)/$(TARGET)
 
 # Optimized build
 release: FLAGS = $(OPT_FLAGS)
-release: clean all
+release: $(BUILDDIR)/$(TARGET)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cc $(HEADER)
 	$(CXX) $(FLAGS) -o $@ -c $< 
@@ -47,5 +47,4 @@ $(BUILDDIR)/$(TARGET): $(OBJ)
 
 # Clean rule
 clean:
-	del /F /Q $(OBJDIR)\*.o $(TARGET)
-	rmdir /S /Q $(OBJDIR)  # Supprime le répertoire Build
+	@if exist "$(BUILDDIR)" (rmdir /S /Q "$(BUILDDIR)")

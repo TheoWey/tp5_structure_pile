@@ -82,8 +82,8 @@ void saisie(Type *var, const char *prompt, const char *format) {
         scanf(format, var);
     } while (!confirm(true));
 }
-template void saisie<char>(char *var, const char *prompt, const char *format);
-template void saisie<uint8_t>(uint8_t *var, const char *prompt,
+template void saisie<char>(char var[], const char *prompt, const char *format);
+template void saisie<int>(int *var, const char *prompt,
                               const char *format);
 template void saisie<float>(float *var, const char *prompt,
                                const char *format);
@@ -112,6 +112,16 @@ void saisie(bool *redoublant) {
         scanf("%3s", selection);
         *redoublant = (strcmp("YES", selection) == 0);
     } while (!confirm(true));
+}
+
+void ask_index(const char *prompt, uint8_t *index, uint8_t *index_max) {
+        do {
+        printf(prompt, *index);
+        scanf("%i", index);
+        if (*index > *index_max) {
+            printf("saisi hors plage max : %i", *index_max);
+        }
+    } while (*index > *index_max);
 }
 
 bool confirm(bool single) {
